@@ -19,6 +19,7 @@ public class CustomerDetailEndPoint {
 	@ResponsePayload  // transforma o objeto Java em XML para devolver como resposta
 	public GetCustomerDetailResponse processCustomerDetailRequest(@RequestPayload GetCustomerDetailRequest req) {
 		
+		String temp = "Teste";
 		GetCustomerDetailResponse response = new GetCustomerDetailResponse();
 		
 		//Mocando uma resposta fixa
