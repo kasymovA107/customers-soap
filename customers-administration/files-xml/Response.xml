@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<GetCustomerDetailResponse 
+		xmlns="http://okidoi.com.br"
+		xsi:schemaLocation="http://okidoi.com.br customer-information.xsd"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<CustomerDetail>
+		<id>123</id>
+		<name>José</name>
+		<phone>998899887</phone>
+		<email>jose@gmail.com</email>
+	</CustomerDetail>
+		
+</GetCustomerDetailResponse>
