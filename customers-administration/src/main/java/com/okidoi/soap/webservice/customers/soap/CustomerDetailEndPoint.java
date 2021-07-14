@@ -10,6 +10,7 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import com.okidoi.soap.webservice.customers.bean.Customer;
 import com.okidoi.soap.webservice.customers.service.CustomerDetailService;
+import com.okidoi.soap.webservice.customers.soap.exception.CustomerNotFoundException;
 
 import br.com.okidoi.CustomerDetail;
 import br.com.okidoi.DeleteCustomerResponse;
@@ -33,7 +34,7 @@ public class CustomerDetailEndPoint {
 		
 		Customer customer = service.findById(req.getId());
 		if(customer == null) {
-			throw new Exception("Invalid Customer Id" + req.getId());
+			throw new CustomerNotFoundException("Invalid Customer Id" + req.getId());
 		}
 		
 		return convertToCustomerDetailResponse(customer);
