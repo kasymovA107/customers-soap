@@ -1,0 +1,55 @@
+
+PARA 
+
+1) O METODO GETCUSTOMERDETAIL COM SEGURANÇA...deve usar esse XML
+
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:okid="http://okidoi.com.br">
+   <soapenv:Header>
+	   <wsse:Security
+	   		xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+	   		mustUnderstand="1">   	
+	   	<wsse:UsernameToken>
+	   		<wsse:Username>admin</wsse:Username>
+	   		<wsse:Password>changeit</wsse:Password>
+	   	</wsse:UsernameToken>
+	   </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body>
+      <okid:GetCustomerDetailRequest>
+         <okid:id>1</okid:id>
+      </okid:GetCustomerDetailRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+2) Caso ative o Listener (interceptor deve estar presente classe WebServiceConfig)
+
+	@Bean
+	public XwsSecurityInterceptor securityInterceptor() {  //Interceptará todas as solicitações que chegarem e verificará se é segura. (Se o usuário e senha passados são validos)
+		
+		XwsSecurityInterceptor  securityInterceptor = new XwsSecurityInterceptor ();
+		securityInterceptor.setCallbackHandler(callbackHandler());
+		securityInterceptor.setPolicyConfiguration(new ClassPathResource("securityPolicy.xml")); //pega do xml em src/main/resources
+		return securityInterceptor;
+	}
+	
+	
+	@Bean
+	public SimplePasswordValidationCallbackHandler callbackHandler() {
+		
+		SimplePasswordValidationCallbackHandler handler = new SimplePasswordValidationCallbackHandler();
+		handler.setUsersMap(Collections.singletonMap("admin", "changeit"));   //USUARIO E SENHA
+		return handler;
+		
+	}
+	
+	@Override
+	public void addInterceptors(List<EndpointInterceptor> interceptors) {
+			
+		interceptors.add(securityInterceptor());  //adiciona o nosso securityInterceptor
+	}
+	
+	
+	
+3) Caso não queira essa parte de Segurança então remover o interceptor. Também pode remover a parte da tag <wsse:Security> e todo o seu conteudo.

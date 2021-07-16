@@ -1,5 +1,10 @@
 package com.okidoi.soap.webservice.customers.soap;
 
+import java.util.Collections;
+import java.util.List;
+
+
+
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.config.annotation.EnableWs;
 import org.springframework.ws.config.annotation.WsConfigurerAdapter;
+import org.springframework.ws.server.EndpointInterceptor;
+import org.springframework.ws.soap.security.xwss.callback.SimplePasswordValidationCallbackHandler;
+import org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
@@ -44,5 +52,31 @@ public class WebServiceConfig extends WsConfigurerAdapter{
 		definition.setSchema(customerSchema);
 		return definition;
 	} 
+	
+	@Bean
+	public XwsSecurityInterceptor securityInterceptor() {  //Interceptará todas as solicitações que chegarem e verificará se é segura. (Se o usuário e senha passados são validos)
+		
+		XwsSecurityInterceptor  securityInterceptor = new XwsSecurityInterceptor ();
+		securityInterceptor.setCallbackHandler(callbackHandler());
+		securityInterceptor.setPolicyConfiguration(new ClassPathResource("securityPolicy.xml")); //pega do xml em src/main/resources
+		return securityInterceptor;
+	}
+	
+	
+	@Bean
+	public SimplePasswordValidationCallbackHandler callbackHandler() {
+		
+		SimplePasswordValidationCallbackHandler handler = new SimplePasswordValidationCallbackHandler();
+		handler.setUsersMap(Collections.singletonMap("admin", "changeit"));
+		return handler;
+		
+	}
+	
+	@Override
+	public void addInterceptors(List<EndpointInterceptor> interceptors) {
+			
+		interceptors.add(securityInterceptor());  //adiciona o nosso securityInterceptor
+	}
+	
 	
 }
